@@ -1,3 +1,4 @@
+
 import sklearn
 import scipy.stats
 
@@ -12,12 +13,14 @@ def AUPRC_comparison(y_ref, yhat_ref, yhat_target, bootstrap=10):
     yhat_target : likelihood value of target model consisted with 0 ~ 1
 
     example:
-    a = np.array([0,0,0,0,0,1,1,1,1,1])
-    b = np.array([0.3,0.2,0.4,0.5,0.6,.7,.6,.8,.3,.4])
-    c = np.array([0.1,0.1,0.1,0.5,0.4,.7,.6,.8,.3,.4])
+    a = np.array([0,0,0,0,0,0,1,1,1,1,1,1,1]) # GT
+    b = np.array([0.1,0.2,0.05,0.3,0.1,0.6,0.6,0.7,0.8,0.99,0.8,0.67,0.5]) # prediction of model1
+    c = np.array([0.3,0.6,0.2,0.1,0.1,0.9,0.23,0.7,0.9,0.4,0.77,0.3,0.89]) # prediction of model2
 
     AUPRC_comparison(a,b,c)
-    
+    {'auprc_ref': 0.9761904761904762,
+     'auprc_target': 0.6968253968253969,
+     'pvalue': 2.883157770374743e-05}
     """
     assert len(y_ref) == len(yhat_ref) == len(yhat_target)
 
@@ -26,7 +29,7 @@ def AUPRC_comparison(y_ref, yhat_ref, yhat_target, bootstrap=10):
     
     for i in range(bootstrap):
         # sampling
-        y_ref_sample, _, yhat_ref_sample, _, yhat_target_sample,_ = sklearn.model_selection.train_test_split(y_ref, yhat_ref, yhat_target, train_size=0.8, random_state=None)
+        y_ref_sample, _, yhat_ref_sample, _, yhat_target_sample,_ = sklearn.model_selection.train_test_split(y_ref, yhat_ref, yhat_target, train_size=0.8, random_state=i)
         
         # compute AUPRC
         auprc_ref = sklearn.metrics.average_precision_score(y_ref_sample,yhat_ref_sample)
